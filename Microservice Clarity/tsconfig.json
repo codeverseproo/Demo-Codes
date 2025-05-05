@@ -1,0 +1,26 @@
+
+{
+  "compilerOptions": {
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": ["es2018", "dom"], 
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist", 
+    "rootDir": "./",
+    "baseUrl": "./", 
+    "paths": { 
+        "shared/*": ["shared/src/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "shared/**/*.ts",
+    "service-a/**/*.ts",
+    "service-b/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
