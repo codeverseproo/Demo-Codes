@@ -1,0 +1,12 @@
+{
+  "name": "async-flow-composer-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^22.15.3",
+    "install": "^0.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
