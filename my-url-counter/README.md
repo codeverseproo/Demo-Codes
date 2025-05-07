@@ -78,16 +78,11 @@ This is a standard React application and can be deployed like any other static s
 1.     
 1. 2.  **Deploy the contents of the build folder:** You can deploy this folder to any static hosting service, such as:
 1.     
-1.     * *   Netlify
-1.     *     
+1.     * *   Netlify   
 1.     * *   Vercel
-1.     *     
 1.     * *   GitHub Pages (requires specific configuration for React Router)
-1.     *     
 1.     * *   AWS S3 + CloudFront
-1.     *     
 1.     * *   Surge.sh
-1.     *     
 1.     
 1.     Most services will automatically detect the build folder and deploy it.
 1.     
