@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Alpine.js Dropdown</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      padding: 2rem;
+    }
+    
+    button {
+      background: #4F46E5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+    
+    .dropdown-menu {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-top: 0.5rem;
+      padding: 0.5rem 0;
+      width: 12rem;
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #1a202c;
+      text-decoration: none;
+    }
+    
+    .dropdown-menu a:hover {
+      background: #f7fafc;
+    }
+
+    .rotate-180 {
+      transform: rotate(180deg);
+    }
+
+    .transition-transform {
+      transition: transform 0.2s;
+    }
+
+    .ml-1 {
+      margin-left: 0.25rem;
+    }
+
+    .h-4 {
+      height: 1rem;
+    }
+
+    .w-4 {
+      width: 1rem;
+    }
+  </style>
+  <!-- Alpine.js from CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script>
+</head>
+<body>
+  <!-- Dropdown component -->
+  <div x-data="{ open: false }">
+    <!-- Enhanced trigger button with icon -->
+    <button 
+      @click="open = !open"
+      @keydown.escape.window="open = false"
+      class="flex items-center"
+    >
+      Menu
+      <!-- Icon that rotates when dropdown is open -->
+      <svg 
+        xmlns="http://www.w3.org/2000/svg" 
+        class="h-4 w-4 ml-1 transition-transform duration-200" 
+        :class="{'rotate-180': open}"
+        fill="none" 
+        viewBox="0 0 24 24" 
+        stroke="currentColor"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+    
+    <!-- Enhanced dropdown with transitions -->
+    <div 
+      x-show="open" 
+      x-transition:enter="transition ease-out duration-100"
+      x-transition:enter-start="opacity-0 transform scale-95"
+      x-transition:enter-end="opacity-100 transform scale-100"
+      x-transition:leave="transition ease-in duration-75"
+      x-transition:leave-start="opacity-100 transform scale-100"
+      x-transition:leave-end="opacity-0 transform scale-95"
+      @click.away="open = false"
+      class="dropdown-menu"
+      style="display: none;"
+    >
+      <a href="#" @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()">Profile</a>
+      <a href="#" @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()" @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()">Settings</a>
+      <a href="#" @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()" @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()">Help</a>
+      <a href="#" @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()">Sign out</a>
+    </div>
+  </div>
+</body>
+</html>

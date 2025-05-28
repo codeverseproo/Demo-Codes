@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpine.js Dropdown Demo</title>
+  
+  <!-- Alpine.js from CDN with fixed version -->
+  <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script>
+  
+  <!-- Custom Alpine.js dropdown components -->
+  <script src="/src/js/alpine-dropdowns.js"></script>
+  
+  <style>
+    /* Tailwind classes */
+    @tailwind base;
+    @tailwind components;
+    @tailwind utilities;
+    
+    /* Custom styles */
+    .dropdown-item:focus {
+      @apply outline-none ring-2 ring-indigo-500 ring-offset-2;
+    }
+    
+    .dropdown-transition {
+      transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+    }
+    
+    .dropdown-enter {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    
+    .dropdown-enter-active {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .dropdown-leave {
+      opacity: 1;
+      transform: scale(1);
+    }
+    
+    .dropdown-leave-active {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <header class="bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <h1 class="text-xl font-bold text-indigo-600">Alpine.js Dropdowns</h1>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="flex items-center space-x-4">
+          <a href="#" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+          <a href="#" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Features</a>
+          
+          <!-- Nav Dropdown -->
+          <div x-data="dropdown()" class="relative">
+            <button 
+              @click="toggle()"
+              @keydown.escape.window="close()"
+              class="flex items-center text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium"
+              aria-haspopup="true"
+              :aria-expanded="open"
+            >
+              Products
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                class="h-4 w-4 ml-1 transition-transform duration-200" 
+                :class="{'rotate-180': arrowRotation}"
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+            
+            <div 
+              x-show="open" 
+              x-transition:enter="dropdown-transition dropdown-enter"
+              x-transition:enter-end="dropdown-enter-active"
+              x-transition:leave="dropdown-transition dropdown-leave"
+              x-transition:leave-end="dropdown-leave-active"
+              @click.away="close()"
+              class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 ring-1 ring-black ring-opacity-5"
+              style="display: none;"
+              role="menu"
+              aria-orientation="vertical"
+            >
+              <a href="#" class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100" role="menuitem" tabindex="-1" @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()">Product One</a>
+              <a href="#" class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100" role="menuitem" tabindex="-1" @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()" @keydown.arrow-down.prevent="$el.nextElementSibling?.focus()">Product Two</a>
+              <a href="#" class="dropdown-item block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 focus:bg-gray-100" role="menuitem" tabindex="-1" @keydown.arrow-up.prevent="$el.previousElementSibling?.focus()">Product Three</a>
+            </div>
+          </div>
+          
+          <a href="#" class="text-gray-700 hover:text-indigo-600 px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+  
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h2 class="text-2xl font-bold text-gray-900 mb-8">Dropdown Variations</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Basic Dropdown -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Basic Dropdown</h3>
+        <div x-data="{ open: false }" class="relative inline-block text-left">
+          <button 
+            @click="open = !open"
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Options
+          </button>
+          
+          <div 
+            x-show="open" 
+            @click.away="open = false"
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Duplicate</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Hover Dropdown -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Hover Dropdown</h3>
+        <div x-data="dropdown({ hoverBehavior: true })" class="relative inline-block text-left">
+          <button 
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            Hover Me
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-4 w-4 ml-1 transition-transform duration-200" 
+              :class="{'rotate-180': arrowRotation}"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <div 
+            x-show="open" 
+            x-transition:enter="dropdown-transition dropdown-enter"
+            x-transition:enter-end="dropdown-enter-active"
+            x-transition:leave="dropdown-transition dropdown-leave"
+            x-transition:leave-end="dropdown-leave-active"
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Account Settings</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Support</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">License</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Multi-level Dropdown -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Multi-level Dropdown</h3>
+        <div x-data="{ open: false, subOpen: false }" class="relative inline-block text-left">
+          <button 
+            @click="open = !open"
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+          >
+            Categories
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-4 w-4 ml-1 transition-transform duration-200" 
+              :class="{'rotate-180': open}"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <div 
+            x-show="open" 
+            @click.away="open = false; subOpen = false"
+            x-transition:enter="dropdown-transition dropdown-enter"
+            x-transition:enter-end="dropdown-enter-active"
+            x-transition:leave="dropdown-transition dropdown-leave"
+            x-transition:leave-end="dropdown-leave-active"
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Electronics</a>
+              <div class="relative">
+                <button 
+                  @click="subOpen = !subOpen" 
+                  @mouseenter="subOpen = true"
+                  class="flex justify-between w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Clothing
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+                <div 
+                  x-show="subOpen" 
+                  @mouseleave="subOpen = false"
+                  x-transition:enter="dropdown-transition dropdown-enter"
+                  x-transition:enter-end="dropdown-enter-active"
+                  x-transition:leave="dropdown-transition dropdown-leave"
+                  x-transition:leave-end="dropdown-leave-active"
+                  class="absolute left-full top-0 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+                  style="display: none;"
+                >
+                  <div class="py-1">
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Men's</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Women's</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Kids'</a>
+                  </div>
+                </div>
+              </div>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Home & Garden</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dropdown with Icons -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Dropdown with Icons</h3>
+        <div x-data="dropdown()" class="relative inline-block text-left">
+          <button 
+            @click="toggle()"
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            User Menu
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-4 w-4 ml-1 transition-transform duration-200" 
+              :class="{'rotate-180': arrowRotation}"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <div 
+            x-show="open" 
+            @click.away="close()"
+            x-transition:enter="dropdown-transition dropdown-enter"
+            x-transition:enter-end="dropdown-enter-active"
+            x-transition:leave="dropdown-transition dropdown-leave"
+            x-transition:leave-end="dropdown-leave-active"
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                </svg>
+                Profile
+              </a>
+              <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                </svg>
+                Settings
+              </a>
+              <a href="#" class="group flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                <svg class="mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                </svg>
+                Sign out
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Mobile-friendly Dropdown -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Mobile-friendly Dropdown</h3>
+        <div x-data="{ open: false }" class="relative inline-block text-left">
+          <button 
+            @click="open = !open"
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-pink-600 rounded-md hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+          >
+            <span class="sm:hidden">Menu</span>
+            <span class="hidden sm:inline">Actions</span>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-4 w-4 ml-1 transition-transform duration-200" 
+              :class="{'rotate-180': open}"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <div 
+            x-show="open" 
+            @click.away="open = false"
+            x-transition:enter="dropdown-transition dropdown-enter"
+            x-transition:enter-end="dropdown-enter-active"
+            x-transition:leave="dropdown-transition dropdown-leave"
+            x-transition:leave-end="dropdown-leave-active"
+            class="absolute left-0 mt-2 w-56 sm:w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:origin-top-right sm:right-0 sm:left-auto"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Share</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Embed</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Report</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dropdown with Dividers -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-lg font-medium text-gray-900 mb-4">Dropdown with Dividers</h3>
+        <div x-data="dropdown()" class="relative inline-block text-left">
+          <button 
+            @click="toggle()"
+            class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-yellow-600 rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
+          >
+            Account
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              class="h-4 w-4 ml-1 transition-transform duration-200" 
+              :class="{'rotate-180': arrowRotation}"
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          <div 
+            x-show="open" 
+            @click.away="close()"
+            x-transition:enter="dropdown-transition dropdown-enter"
+            x-transition:enter-end="dropdown-enter-active"
+            x-transition:leave="dropdown-transition dropdown-leave"
+            x-transition:leave-end="dropdown-leave-active"
+            class="absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+            style="display: none;"
+          >
+            <div class="py-1">
+              <div class="px-4 py-2 text-xs text-gray-500">Signed in as</div>
+              <div class="px-4 py-2 text-sm font-medium text-gray-900">user@example.com</div>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</a>
+              <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+              <div class="border-t border-gray-100 my-1"></div>
+              <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sign out</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-12 bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">How to Use</h2>
+      <div class="prose max-w-none">
+        <p class="text-gray-700">
+          This demo showcases various dropdown implementations using Alpine.js. Each dropdown demonstrates different features and styling options that you can use in your projects.
+        </p>
+        <p class="text-gray-700 mt-4">
+          The dropdowns are built with accessibility in mind, supporting keyboard navigation and proper ARIA attributes. They're also fully responsive and work well on mobile devices.
+        </p>
+        <p class="text-gray-700 mt-4">
+          Check out the README.md file for detailed documentation and installation instructions.
+        </p>
+      </div>
+    </div>
+  </main>
+  
+  <footer class="bg-white mt-12 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <p class="text-center text-gray-500 text-sm">
+        Alpine.js Dropdown Demo - A lightweight, accessible dropdown solution
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

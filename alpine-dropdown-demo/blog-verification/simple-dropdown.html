@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Alpine.js Dropdown</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      line-height: 1.5;
+      padding: 2rem;
+    }
+    
+    button {
+      background: #4F46E5;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+    
+    .dropdown-menu {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-top: 0.5rem;
+      padding: 0.5rem 0;
+      width: 12rem;
+    }
+    
+    .dropdown-menu a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: #1a202c;
+      text-decoration: none;
+    }
+    
+    .dropdown-menu a:hover {
+      background: #f7fafc;
+    }
+  </style>
+  <!-- Alpine.js from CDN -->
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body>
+  <!-- Dropdown component -->
+  <div x-data="{ open: false }">
+    <!-- Trigger button -->
+    <button @click="open = !open">
+      Menu
+    </button>
+    
+    <!-- Dropdown menu -->
+    <div class="dropdown-menu" x-show="open" @click.away="open = false">
+      <a href="#">Profile</a>
+      <a href="#">Settings</a>
+      <a href="#">Help</a>
+      <a href="#">Sign out</a>
+    </div>
+  </div>
+</body>
+</html>
