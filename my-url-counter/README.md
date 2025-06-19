@@ -15,7 +15,7 @@ This pattern enables:
 *   Leveraging Browser History: Back and forward buttons navigate through UI states.
     
 
-## How it Works
+## How it Works 
 
 The application's counter value and an optional 'mode' are stored directly in the URL's query parameters (e.g., `/?count=10&mode=increment`).
 
