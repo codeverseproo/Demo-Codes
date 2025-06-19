@@ -2,7 +2,7 @@
 
 A comprehensive Next.js App Router migration template with best-practice configurations for transitioning from Create React App.
 
-## 🚀 Features 
+## 🚀 Features
 
 - **App Router**: Built with the latest Next.js App Router
 - **Server Components**: Leverage React Server Components for better performance
