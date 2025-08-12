@@ -3,8 +3,15 @@ Advanced Matrix Factorization with Bias Terms
 This module implements matrix factorization with user and item bias terms.
 """
 
+import os
+import sys
 import numpy as np
-from ..basic.data_setup import ratings, users, movies
+
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+from src.basic.data_setup import ratings, users, movies
 
 class MatrixFactorizationWithBias:
     """

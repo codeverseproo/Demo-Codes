@@ -8,14 +8,16 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-# Add src directory to path for imports
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+# Add project root directory to path for imports
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
 
-from basic.data_setup import display_ratings_data, get_data_info
-from basic.matrix_factorization import BasicMatrixFactorization
-from advanced.matrix_factorization_with_bias import MatrixFactorizationWithBias
-from advanced.matrix_factorization_regularized import RegularizedMatrixFactorization
-from utils.hash_table_demo import compare_search_performance
+# Now import using the full module path consistently
+from src.basic.data_setup import display_ratings_data, get_data_info
+from src.basic.matrix_factorization import BasicMatrixFactorization
+from src.advanced.matrix_factorization_with_bias import MatrixFactorizationWithBias
+from src.advanced.matrix_factorization_regularized import RegularizedMatrixFactorization
+from src.utils.hash_table_demo import compare_search_performance
 
 def create_comparison_plot():
     """Create a comparison plot of all three models."""
@@ -69,7 +71,11 @@ def create_comparison_plot():
                 f'{value:.3f}', ha='center', va='bottom')
     
     plt.tight_layout()
-    plt.savefig('/home/ubuntu/netflix-recommendation-blog/assets/model_comparison.png', 
+    
+    # Fixed path - use project root relative path
+    assets_dir = os.path.join(project_root, 'assets')
+    os.makedirs(assets_dir, exist_ok=True)
+    plt.savefig(os.path.join(assets_dir, 'model_comparison.png'), 
                 dpi=300, bbox_inches='tight')
     plt.show()
     
@@ -79,7 +85,8 @@ def demonstrate_learning_curve():
     """Demonstrate how the model learns over time."""
     print("\n=== Demonstrating Learning Curve ===")
     
-    from basic.data_setup import ratings
+    # Fixed import - use consistent src prefix
+    from src.basic.data_setup import ratings
     
     # Modified training to track error over epochs
     model = BasicMatrixFactorization(num_factors=2, learning_rate=0.01, num_epochs=100)
@@ -110,7 +117,10 @@ def demonstrate_learning_curve():
     plt.ylabel('Total Absolute Error')
     plt.title('Learning Curve: How the Algorithm Learns Over Time')
     plt.grid(True, alpha=0.3)
-    plt.savefig('/home/ubuntu/netflix-recommendation-blog/assets/learning_curve.png', 
+    
+    # Fixed path - use project root relative path
+    assets_dir = os.path.join(project_root, 'assets')
+    plt.savefig(os.path.join(assets_dir, 'learning_curve.png'), 
                 dpi=300, bbox_inches='tight')
     plt.show()
     
@@ -122,7 +132,8 @@ def create_matrix_visualization():
     """Create a visualization of the matrix factorization process."""
     print("\n=== Creating Matrix Visualization ===")
     
-    from basic.data_setup import ratings, users, movies
+    # Fixed import - use consistent src prefix
+    from src.basic.data_setup import ratings, users, movies
     
     # Create the user-item matrix
     user_item_matrix = np.full((len(users), len(movies)), np.nan)
@@ -183,7 +194,10 @@ def create_matrix_visualization():
     plt.colorbar(im4, ax=axes[3])
     
     plt.tight_layout()
-    plt.savefig('/home/ubuntu/netflix-recommendation-blog/assets/matrix_factorization_visualization.png', 
+    
+    # Fixed path - use project root relative path
+    assets_dir = os.path.join(project_root, 'assets')
+    plt.savefig(os.path.join(assets_dir, 'matrix_factorization_visualization.png'), 
                 dpi=300, bbox_inches='tight')
     plt.show()
 
@@ -245,7 +259,8 @@ def comprehensive_recommendation_demo():
     )
     best_model.train(verbose=False)
     
-    from basic.data_setup import users
+    # Fixed import - use consistent src prefix
+    from src.basic.data_setup import users
     
     print("Personalized Recommendations:")
     for user_id in range(len(users)):
@@ -264,9 +279,9 @@ def comprehensive_recommendation_demo():
     print("="*80)
 
 if __name__ == "__main__":
-    # Create assets directory if it doesn't exist
-    os.makedirs('/home/ubuntu/netflix-recommendation-blog/assets', exist_ok=True)
+    # Create assets directory if it doesn't exist - Fixed for cross-platform compatibility
+    assets_dir = os.path.join(project_root, 'assets')
+    os.makedirs(assets_dir, exist_ok=True)
     
     # Run the comprehensive demo
     comprehensive_recommendation_demo()
-

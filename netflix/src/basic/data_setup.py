@@ -6,14 +6,16 @@ This module contains the foundational data structures and initialization code.
 import numpy as np
 
 # Our simplified user-movie rating data: {user_id: {movie_id: rating}}
+# Some ratings are intentionally missing so the recommender has something to predict
 ratings = {
-    0: {0: 5, 1: 3, 2: 4, 3: 1},  # Alice
-    1: {0: 4, 1: 2, 2: 5, 3: 2},  # Bob
-    2: {0: 1, 1: 4, 2: 2, 3: 5},  # Charlie
-    3: {0: 2, 1: 5, 2: 1, 3: 4},  # David
-    4: {0: 3, 1: 1, 2: 3, 3: 2},  # Eve
+    0: {0: 5, 1: 3, 2: 4},          # Alice hasn't rated movie 3
+    1: {0: 4, 1: 2, 2: 5},          # Bob hasn't rated movie 3
+    2: {1: 4, 2: 2, 3: 5},          # Charlie hasn't rated movie 0
+    3: {0: 2, 1: 5, 3: 4},          # David hasn't rated movie 2
+    4: {0: 3, 2: 3}                 # Eve hasn't rated movies 1 & 3
 }
 
+# Movie ID → Title
 movies = {
     0: "The Action Hero",
     1: "Romantic Comedy",
@@ -21,6 +23,7 @@ movies = {
     3: "Drama Thriller",
 }
 
+# User ID → Name
 users = {
     0: "Alice",
     1: "Bob",
@@ -50,12 +53,12 @@ def initialize_matrices(num_factors=2):
     Returns:
         tuple: (P, Q) matrices
     """
-    num_users = len(ratings)
+    num_users = len(users)
     num_movies = len(movies)
     
     # Initialize matrices with random values
     P = np.random.rand(num_users, num_factors)  # User-Feature Matrix
-    Q = np.random.rand(num_movies, num_factors)  # Movie-Feature Matrix
+    Q = np.random.rand(num_movies, num_factors) # Movie-Feature Matrix
     
     print(f"\n--- Initialized Matrices (Our Blank Slate) ---")
     print(f"User-Feature Matrix (P) shape: {P.shape}\n{P}")
@@ -66,11 +69,13 @@ def initialize_matrices(num_factors=2):
 
 def get_data_info():
     """Return basic information about the dataset."""
+    total_possible = len(users) * len(movies)
+    total_actual = sum(len(user_ratings) for user_ratings in ratings.values())
     return {
         'num_users': len(users),
         'num_movies': len(movies),
-        'num_ratings': sum(len(user_ratings) for user_ratings in ratings.values()),
-        'sparsity': 1 - (sum(len(user_ratings) for user_ratings in ratings.values()) / (len(users) * len(movies)))
+        'num_ratings': total_actual,
+        'sparsity': 1 - (total_actual / total_possible)
     }
 
 if __name__ == "__main__":
@@ -84,4 +89,3 @@ if __name__ == "__main__":
     print(f"Movies: {info['num_movies']}")
     print(f"Ratings: {info['num_ratings']}")
     print(f"Sparsity: {info['sparsity']:.2%}")
-

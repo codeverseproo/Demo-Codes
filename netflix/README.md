@@ -212,13 +212,13 @@ Each module can be run independently to explore specific concepts:
 
 ```bash
 # Basic matrix factorization
-python src/basic/matrix_factorization.py
+python -m src.basic.matrix_factorization
 
 # Matrix factorization with bias
-python src/advanced/matrix_factorization_with_bias.py
+python -m src.advanced.matrix_factorization_with_bias
 
 # Regularized matrix factorization
-python src/advanced/matrix_factorization_regularized.py
+python -m src.advanced.matrix_factorization_regularized
 
 # Hash table performance demo
 python src/utils/hash_table_demo.py

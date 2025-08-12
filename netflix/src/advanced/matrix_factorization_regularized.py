@@ -3,8 +3,17 @@ Regularized Matrix Factorization Implementation
 This module implements matrix factorization with bias terms and regularization.
 """
 
+import os
+import sys
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
+
+
+
 import numpy as np
-from ..basic.data_setup import ratings, users, movies
+
+from src.basic.data_setup import ratings, users, movies
 
 class RegularizedMatrixFactorization:
     """
