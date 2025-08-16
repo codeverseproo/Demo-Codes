@@ -45,6 +45,9 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
   const [prefixQueryIdx, setPrefixQueryIdx] = useState(initialArray.length - 1);
   const [inputWarning, setInputWarning] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [queryResult, setQueryResult] = useState(null);
+  const [rangeQueryResult, setRangeQueryResult] = useState(null);
+
 
   // Effect to manage the theme based on Tailwind's class-based approach
   useEffect(() => {
@@ -91,7 +94,7 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
       for (let i = 0; i < this.n; i++) {
         this.updateWithSteps(i, this.originalArr[i], true);
       }
-      this.steps.push({ message: `Build complete.`, highlights: { tree: new Set(), array: new Set(), links: new Set() } });
+      this.steps.push({ message: `Build complete. Ready for operations.`, highlights: { tree: new Set(), array: new Set(), links: new Set() } });
     }
 
     updateWithSteps(idx, val, isBuild = false) {
@@ -139,6 +142,7 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
         const sumL_minus_1 = l > 0 ? this.queryWithSteps(l - 1) : 0;
         const result = sumR - sumL_minus_1;
         this.steps.push({ message: `Range sum [${l}, ${r}] = (Sum to ${r}) - (Sum to ${l-1}) = ${sumR} - ${sumL_minus_1} = ${result}.`, highlights: { array: new Set(), tree: new Set(), links: new Set() } });
+        return result;
     }
   }
 
@@ -147,13 +151,13 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
     const ft = new FenwickTreeWithSteps(array);
     setTree([...ft.tree]);
     setAnimationSteps(ft.steps);
-    setCurrentStep(0);
+    setCurrentStep(ft.steps.length - 1);
     setHighlightedIndices({ tree: new Set(), array: new Set(), links: new Set() });
   }, [array]);
 
   useEffect(() => {
-    if (!isPlaying || currentStep >= animationSteps.length) {
-      if (currentStep >= animationSteps.length) setIsPlaying(false);
+    if (!isPlaying || currentStep >= animationSteps.length - 1) {
+      if (currentStep >= animationSteps.length - 1) setIsPlaying(false);
       return;
     }
     const timer = setTimeout(() => setCurrentStep(prev => prev + 1), 600);
@@ -161,10 +165,7 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
   }, [isPlaying, currentStep, animationSteps.length]);
 
   useEffect(() => {
-    if (animationSteps.length === 0 || currentStep >= animationSteps.length) {
-      setHighlightedIndices({ tree: new Set(), array: new Set(), links: new Set() });
-      return;
-    }
+    if (animationSteps.length === 0) return;
     const step = animationSteps[currentStep];
     if (step) {
       setHighlightedIndices(step.highlights);
@@ -175,20 +176,27 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
   // --- Event Handlers ---
   const executeOperation = (type) => {
     operationStartTime.current = performance.now();
+    setQueryResult(null);
+    setRangeQueryResult(null);
+
     const ft = new FenwickTreeWithSteps(array);
     ft.steps = [];
 
     if (type === 'update') {
       const newArray = [...array];
       newArray[updateParams.idx] = updateParams.val;
-      setArray(newArray); // This triggers a rebuild, which shows the update process.
+      setArray(newArray); // This triggers a rebuild.
       trackOperation(type, operationStartTime.current);
       return;
     }
     if (type === 'query') {
-      ft.queryWithSteps(prefixQueryIdx);
+      const result = ft.queryWithSteps(prefixQueryIdx);
+      ft.steps.push({ message: `Query complete. Result: ${result}`, highlights: { tree: new Set(), array: new Set(), links: new Set() } });
+      setQueryResult(result);
     } else if (type === 'range_query') {
-      ft.rangeQueryWithSteps(queryRange.l, queryRange.r);
+      const result = ft.rangeQueryWithSteps(queryRange.l, queryRange.r);
+      ft.steps.push({ message: `Range query complete. Result: ${result}`, highlights: { tree: new Set(), array: new Set(), links: new Set() } });
+      setRangeQueryResult(result);
     }
     
     setAnimationSteps(ft.steps);
@@ -208,16 +216,24 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
   };
 
   const handlePlayPause = () => setIsPlaying(!isPlaying);
-  const handleReset = () => { setIsPlaying(false); setCurrentStep(0); };
-  const handleNextStep = () => { if (currentStep < animationSteps.length) { setIsPlaying(false); setCurrentStep(currentStep + 1); } };
+  const handleReset = () => {
+    setIsPlaying(false);
+    setCurrentStep(animationSteps.length - 1);
+  };
+  const handleNextStep = () => { if (currentStep < animationSteps.length - 1) { setIsPlaying(false); setCurrentStep(currentStep + 1); } };
   const handlePrevStep = () => { if (currentStep > 0) { setIsPlaying(false); setCurrentStep(currentStep - 1); } };
   const handleScrub = (e) => { setIsPlaying(false); setCurrentStep(parseInt(e.target.value, 10)); };
 
   return (
     <div className="fenwick-tree-visualizer p-4 sm:p-6 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans rounded-lg shadow-md transition-colors duration-300">
-      <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-4">Interactive Fenwick Tree (BIT)</h2>
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Interactive Fenwick Tree (BIT)</h2>
+        <p className="text-slate-600 dark:text-slate-400 mt-1 text-sm">
+            Use the controls to build the tree, run queries, or update values. Click 'Play' to see a step-by-step animation.
+        </p>
+      </div>
 
-      <div className="controls mb-6 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+      <div className="controls my-6 p-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Configuration</h3>
@@ -233,24 +249,32 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Operations</h3>
             <div className="flex flex-col gap-3">
-                <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
-                    <label className="font-medium text-sm sm:text-base">Update Idx:</label>
-                    <input type="number" value={updateParams.idx} onChange={(e) => setUpdateParams({...updateParams, idx: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
-                    <span className="text-slate-500 dark:text-slate-400">to val:</span>
-                    <input type="number" value={updateParams.val} onChange={(e) => setUpdateParams({...updateParams, val: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" />
-                    <button onClick={() => executeOperation('update')} className="px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                <div className="flex flex-col gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                        <label className="font-medium text-sm sm:text-base">Update Idx:</label>
+                        <input type="number" value={updateParams.idx} onChange={(e) => setUpdateParams({...updateParams, idx: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
+                        <span className="text-slate-500 dark:text-slate-400">to val:</span>
+                        <input type="number" value={updateParams.val} onChange={(e) => setUpdateParams({...updateParams, val: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" />
+                        <button onClick={() => executeOperation('update')} className="px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                    </div>
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
-                    <label className="font-medium text-sm sm:text-base">Prefix Sum at Idx:</label>
-                    <input type="number" value={prefixQueryIdx} onChange={(e) => setPrefixQueryIdx(parseInt(e.target.value) || 0)} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
-                    <button onClick={() => executeOperation('query')} className="px-3 py-1 bg-sky-600 text-white rounded-md hover:bg-sky-700 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                <div className="flex flex-col gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                        <label className="font-medium text-sm sm:text-base">Prefix Sum at Idx:</label>
+                        <input type="number" value={prefixQueryIdx} onChange={(e) => setPrefixQueryIdx(parseInt(e.target.value) || 0)} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
+                        <button onClick={() => executeOperation('query')} className="px-3 py-1 bg-sky-600 text-white rounded-md hover:bg-sky-700 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                    </div>
+                    {queryResult !== null && <p className="text-center mt-2 font-bold text-lg">Result: <span className="text-sky-500">{queryResult}</span></p>}
                 </div>
-                <div className="flex flex-col sm:flex-row items-center gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
-                    <label className="font-medium text-sm sm:text-base">Range Sum:</label>
-                    <input type="number" value={queryRange.l} onChange={(e) => setQueryRange({...queryRange, l: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
-                    <span className="text-slate-500 dark:text-slate-400">to</span>
-                    <input type="number" value={queryRange.r} onChange={(e) => setQueryRange({...queryRange, r: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
-                    <button onClick={() => executeOperation('range_query')} className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                <div className="flex flex-col gap-2 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-md border dark:border-slate-600">
+                    <div className="flex flex-col sm:flex-row items-center gap-2">
+                        <label className="font-medium text-sm sm:text-base">Range Sum:</label>
+                        <input type="number" value={queryRange.l} onChange={(e) => setQueryRange({...queryRange, l: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
+                        <span className="text-slate-500 dark:text-slate-400">to</span>
+                        <input type="number" value={queryRange.r} onChange={(e) => setQueryRange({...queryRange, r: parseInt(e.target.value) || 0})} className="px-2 py-1 border rounded-md w-full sm:w-20 text-center bg-white dark:bg-slate-700" min="0" max={array.length - 1} />
+                        <button onClick={() => executeOperation('range_query')} className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors w-full sm:w-auto ml-auto">Run</button>
+                    </div>
+                     {rangeQueryResult !== null && <p className="text-center mt-2 font-bold text-lg">Result: <span className="text-green-500">{rangeQueryResult}</span></p>}
                 </div>
             </div>
           </div>
@@ -264,7 +288,7 @@ const InteractiveFenwickTree = ({ initialArray = [1, 3, 5, 7, 9, 11] }) => {
         <div className="step-display">
             <h3 className="text-md sm:text-lg font-semibold mb-2">Animation Step</h3>
             <div className="bg-white dark:bg-slate-800 p-4 rounded-lg border dark:border-slate-700 min-h-[80px] text-sm sm:text-base">
-              {currentStep < animationSteps.length ? (<div><p><strong>Step {currentStep + 1}:</strong> {animationSteps[currentStep]?.message}</p></div>) : (<p className="text-slate-500 dark:text-slate-400">Animation finished or not started.</p>)}
+              {animationSteps[currentStep] && <p><strong>Step {currentStep + 1}:</strong> {animationSteps[currentStep].message}</p>}
             </div>
         </div>
       </div>
@@ -281,7 +305,7 @@ const AnimationControls = React.memo(({ isPlaying, onPlayPause, onReset, onNext,
         <button onClick={onPlayPause} className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors">{isPlaying ? <PauseIcon /> : <PlayIcon />}</button>
         <button onClick={onNext} disabled={currentStep >= totalSteps} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"><NextIcon /></button>
       </div>
-      <div className="text-sm font-mono whitespace-nowrap text-slate-600 dark:text-slate-300">Step: {currentStep} / {totalSteps}</div>
+      <div className="text-sm font-mono whitespace-nowrap text-slate-600 dark:text-slate-300">Step: {currentStep + 1} / {totalSteps + 1}</div>
       <button onClick={onReset} className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"><ResetIcon /></button>
     </div>
     <input type="range" min="0" max={totalSteps} value={currentStep} onChange={onScrub} className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer" />
