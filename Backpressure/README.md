@@ -172,9 +172,7 @@ See full checklist in `IMPLEMENTATION_CHECKLIST.md`
 
 ## Further Reading
 
-- [Full Article](https://beyondit.blog/ai-agent-backpressure-framework)
-- [Implementation Checklist](docs/IMPLEMENTATION_CHECKLIST.md)
-- [Original Research](docs/RESEARCH.md)
+- [Full Article](https://beyondit.blog/blogs/ai-agent-backpressure-framework)
 
 ---
 
