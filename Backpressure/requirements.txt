@@ -1,0 +1,15 @@
+# Backpressure Framework dependencies
+# Python 3.8+
+
+# Core
+pytest>=7.0.0
+
+# Optional: GitHub API integration
+PyGithub>=2.1.0
+
+# Optional: GitLab API integration
+python-gitlab>=4.0.0
+
+# Development
+black>=23.0.0
+flake8>=6.0.0

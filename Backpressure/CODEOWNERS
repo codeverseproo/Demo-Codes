@@ -1,0 +1,10 @@
+# Code Owners
+# Reviewers auto-assigned when files change
+
+* @lead-engineer
+
+# Security-critical files
+auth/* @security-team
+*auth* @security-team
+payment/* @security-team
+infra/* @devops-team
